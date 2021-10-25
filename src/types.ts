@@ -1,4 +1,5 @@
 import { BaseGeometry } from "./geometry/base-geometry";
+import { BaseLight } from "./light/base-light";
 import type { Vec3 } from "./math/vec3";
 import type { FrameBuffer } from "./utils/frame-buffer";
 import type { PerspectiveCamera } from "./utils/perspective-camera";
@@ -8,8 +9,9 @@ export type IStrMap = Record<string, any>;
 export interface IEmpty { };
 
 export interface IScene {
-    camera: PerspectiveCamera;
-    nodes: BaseGeometry[];
+    camera?: PerspectiveCamera;
+    nodes?: BaseGeometry[];
+    light?: BaseLight;
 }
 
 export interface IPerspectiveCameraParam {
@@ -43,5 +45,8 @@ export interface IDepthOutput {
 export interface INormalOutput {
     normal: FrameBuffer;
 };
+export interface IShadeOutput {
+    shaded: FrameBuffer;
+}
 
-export type IPreTestResult = IDepthOutput & INormalOutput;
+export type IPreTestResult = IDepthOutput & INormalOutput & IShadeOutput;

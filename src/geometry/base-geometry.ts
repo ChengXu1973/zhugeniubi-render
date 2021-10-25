@@ -1,3 +1,4 @@
+import { BaseMeterial } from "../material/base-material";
 import { Ray } from "../math/ray";
 import { IntersectResult } from "../utils/intersect-result";
 
@@ -17,5 +18,7 @@ export abstract class BaseGeometry {
     public abstract clone(): BaseGeometry;
 
     public abstract hit(ray: Ray): IntersectResult;
+
+    public meterial: BaseMeterial;
 
 }

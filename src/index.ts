@@ -11,6 +11,7 @@ function main() {
     const testResult = preTest.render();
     renderImage(testResult.depth);
     renderImage(testResult.normal);
+    renderImage(testResult.shaded);
 }
 
 function renderImage(fb: FrameBuffer) {
