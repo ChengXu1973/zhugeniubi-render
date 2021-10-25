@@ -5,18 +5,20 @@ import { BaseMeterial } from "./base-material";
 
 export class BlinnPhoneMaterial extends BaseMeterial {
 
-    public constructor(diffuse: Vec3, specular: Vec3, p: number, ambient: Vec3) {
+    public constructor(diffuse: Vec3, specular: Vec3, p: number, ambient: Vec3, reflcetivity: number) {
         super();
         this.diffuse = diffuse;
         this.specular = specular;
         this.p = p;
         this.ambient = ambient;
+        this.reflcetivity = reflcetivity;
     }
 
     public readonly diffuse: Vec3;
     public readonly specular: Vec3;
     public readonly p: number;
     public readonly ambient: Vec3;
+    public readonly reflcetivity: number;
 
     public shade(ray: Ray, light: Illumination, position: Vec3, normal: Vec3): Vec3 {
         const NdotL = normal.normalize().dot(light.direction.negate());

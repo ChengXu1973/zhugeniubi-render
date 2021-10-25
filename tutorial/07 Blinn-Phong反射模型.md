@@ -1,4 +1,4 @@
-# Blinn-Phong反射模型
+# Blinn-Phong 反射模型
 
 ## 理论部分
 
@@ -24,7 +24,7 @@
 
 ### 环境光
 
-Blinn-Phone模型里面泛光项不受任何其他因素影响，可以理解为一个常量
+Blinn-Phone 模型里面泛光项不受任何其他因素影响，可以理解为一个常量
 
 ![环境光](./images/07/环境光.png)
 
@@ -39,30 +39,39 @@ import { Vec3 } from "../math/vec3";
 import { BaseMeterial } from "./base-material";
 
 export class BlinnPhoneMaterial extends BaseMeterial {
+  public constructor(diffuse: Vec3, specular: Vec3, p: number, ambient: Vec3) {
+    super();
+    this.diffuse = diffuse;
+    this.specular = specular;
+    this.p = p;
+    this.ambient = ambient;
+  }
 
-    public constructor(diffuse: Vec3, specular: Vec3, p: number, ambient: Vec3) {
-        super();
-        this.diffuse = diffuse;
-        this.specular = specular;
-        this.p = p;
-        this.ambient = ambient;
-    }
+  public readonly diffuse: Vec3;
+  public readonly specular: Vec3;
+  public readonly p: number;
+  public readonly ambient: Vec3;
 
-    public readonly diffuse: Vec3;
-    public readonly specular: Vec3;
-    public readonly p: number;
-    public readonly ambient: Vec3;
+  public shade(
+    ray: Ray,
+    light: Illumination,
+    position: Vec3,
+    normal: Vec3
+  ): Vec3 {
+    const NdotL = normal.normalize().dot(light.direction.negate());
+    const diffuse = this.diffuse.multiply(Math.max(0, NdotL));
 
-    public shade(ray: Ray, light: Illumination, position: Vec3, normal: Vec3): Vec3 {
-        const NdotL = normal.normalize().dot(light.direction.negate());
-        const diffuse = this.diffuse.multiply(Math.max(0, NdotL));
+    const h = light.direction
+      .add(ray.direction.normalize())
+      .negate()
+      .normalize();
+    const NdotH = normal.normalize().dot(h);
+    const specular = this.specular.multiply(
+      Math.pow(Math.max(0, NdotH), this.p)
+    );
 
-        const h = light.direction.add(ray.direction.normalize()).negate().normalize();
-        const NdotH = normal.normalize().dot(h);
-        const specular = this.specular.multiply(Math.pow(Math.max(0, NdotH), this.p));
-
-        return this.ambient.add(light.color.modulate(diffuse.add(specular)));
-    }
+    return this.ambient.add(light.color.modulate(diffuse.add(specular)));
+  }
 }
 ```
 
@@ -74,24 +83,24 @@ const color2 = new Vec3(0.325, 0.369, 0.478);
 const color3 = new Vec3(0.682, 0.498, 0.427);
 
 ball1.meterial = new BlinnPhoneMaterial(
-    color1.multiply(0.6),
-    new Vec3(1, 1, 1),
-    30,
-    color1.multiply(0.2),
+  color1.multiply(0.6),
+  new Vec3(1, 1, 1),
+  30,
+  color1.multiply(0.2)
 );
 
 ball2.meterial = new BlinnPhoneMaterial(
-    color2.multiply(0.6),
-    new Vec3(1, 1, 1),
-    50,
-    color2.multiply(0.2),
+  color2.multiply(0.6),
+  new Vec3(1, 1, 1),
+  50,
+  color2.multiply(0.2)
 );
 
 ball3.meterial = new BlinnPhoneMaterial(
-    color3.multiply(0.6),
-    new Vec3(1, 1, 1),
-    80,
-    color3.multiply(0.2),
+  color3.multiply(0.6),
+  new Vec3(1, 1, 1),
+  80,
+  color3.multiply(0.2)
 );
 ```
 
@@ -99,4 +108,4 @@ ball3.meterial = new BlinnPhoneMaterial(
 
 ![blinn-phone材质](./images/07/blinn-phone材质.png)
 
-感jio还阔以，但是差点意思，毕竟是局部着色，为了更加真实逼真的效果，我们可能需要处理一下反射的部分，但是在此之前，我们先对画面进行抗锯齿处理
+感 jio 还阔以，但是差点意思，毕竟是局部着色，为了更加真实逼真的效果，我们可能需要处理一下反射的部分

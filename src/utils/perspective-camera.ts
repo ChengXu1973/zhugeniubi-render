@@ -48,4 +48,9 @@ export class PerspectiveCamera {
             .add(this.up.multiply(this._h * (v - 0.5))));
     }
 
+    public generateMultiRay(x: number, y: number, width: number, height: number){
+        const rays :Ray[]= [];
+        return rays;
+    }
+
 }

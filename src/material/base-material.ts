@@ -6,4 +6,6 @@ export abstract class BaseMeterial {
 
     public abstract shade(ray: Ray, light: Illumination, position: Vec3, normal: Vec3): Vec3;
 
+    public reflcetivity?: number;
+
 }
