@@ -1,18 +1,19 @@
-import { Vec3 } from "./math/vec3";
+import { HelloWorldFlow } from "./render/flow/hello-world-flow";
 import { Canvas } from "./utils/canvas";
 import { FrameBuffer } from "./utils/frame-buffer";
 import { IMAGE_HEIGHT, IMAGE_WIDTH } from "./utils/macros";
 
-const canvas = new Canvas(IMAGE_WIDTH, IMAGE_HEIGHT);
-document.body.appendChild(canvas.canvas);
+function main() {
+    const helloWorld = new HelloWorldFlow();
+    const result = helloWorld.render();
+    renderImage(result.helloWorld);
+    renderImage(result.grayOutput);
+}
 
-const image = new FrameBuffer(IMAGE_WIDTH, IMAGE_HEIGHT);
+function renderImage(fb: FrameBuffer) {
+    const canvas = new Canvas(IMAGE_WIDTH, IMAGE_HEIGHT);
+    document.body.appendChild(canvas.canvas);
+    canvas.render(fb.data);
+}
 
-image.walk((x: number, y: number) => {
-    const r = x / IMAGE_WIDTH;
-    const g = y / IMAGE_HEIGHT;
-    const b = 0.5;
-    return new Vec3(r, g, b);
-});
-
-canvas.render(image.data);
+main();
