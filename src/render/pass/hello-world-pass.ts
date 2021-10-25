@@ -1,5 +1,5 @@
-import { IEmpty, IHelloWorldOutput } from "../../../types";
 import { Vec3 } from "../../math/vec3";
+import { IEmpty, IHelloWorldOutput } from "../../types";
 import { FrameBuffer } from "../../utils/frame-buffer";
 import { IMAGE_HEIGHT, IMAGE_WIDTH } from "../../utils/macros";
 import { BasePass } from "../base-pass";

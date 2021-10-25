@@ -1,5 +1,5 @@
-import { IGrayInput, IGrayOutput } from "../../../types";
 import { Vec3 } from "../../math/vec3";
+import { IGrayInput, IGrayOutput } from "../../types";
 import { FrameBuffer } from "../../utils/frame-buffer";
 import { BasePass } from "../base-pass";
 

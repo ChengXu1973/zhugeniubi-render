@@ -1,4 +1,4 @@
-import { IGrayInput, IHelloWorldFlowResult, IStrMap } from "../../../types";
+import { IGrayInput, IHelloWorldFlowResult, IStrMap } from "../../types";
 import { BaseFlow } from "../base-flow";
 import { GrayPass } from "../pass/gray-pass";
 import { HelloWorldPass } from "../pass/hello-world-pass";

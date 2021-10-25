@@ -1,4 +1,4 @@
-import { IStrMap } from "../../types";
+import { IStrMap } from "../types";
 import { BasePass } from "./base-pass";
 
 export abstract class BaseFlow<K extends IStrMap>{

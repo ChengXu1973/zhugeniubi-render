@@ -1,4 +1,4 @@
-import { IStrMap } from "../../types";
+import { IStrMap } from "../types";
 
 export class BasePass<T extends IStrMap, K extends IStrMap> {
     public constructor(param: T) {
