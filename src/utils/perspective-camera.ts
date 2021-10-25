@@ -1,6 +1,7 @@
 import { Ray } from "../math/ray";
 import { Vec3 } from "../math/vec3";
 import { IPerspectiveCameraParam } from "../types";
+import { SAMPLES_PER_PIXEL } from "./macros";
 
 export class PerspectiveCamera {
 
@@ -48,8 +49,18 @@ export class PerspectiveCamera {
             .add(this.up.multiply(this._h * (v - 0.5))));
     }
 
-    public generateMultiRay(x: number, y: number, width: number, height: number){
-        const rays :Ray[]= [];
+    public generateMultiRay(x: number, y: number, width: number, height: number) {
+        const rays: Ray[] = [];
+        for (let i = 0; i < SAMPLES_PER_PIXEL; i++) {
+            const u = (x + Math.random()) / width;
+            const v = (y + Math.random()) / height;
+            rays.push(
+                new Ray(this.origin, this.origin
+                    .add(this.front.multiply(this.near))
+                    .add(this.right.multiply(this._w * (u - 0.5)))
+                    .add(this.up.multiply(this._h * (v - 0.5))))
+            );
+        }
         return rays;
     }
 
