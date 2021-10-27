@@ -1,5 +1,6 @@
 import { BaseGeometry } from "../../geometry/base-geometry";
-import { BaseLight } from "../../light/base-light";
+import { Illumination } from "../../light/illumination";
+import { PointLight } from "../../light/point-light";
 import { Ray } from "../../math/ray";
 import { Vec3 } from "../../math/vec3";
 import { IScene, IShadeOutput } from "../../types";
@@ -12,7 +13,7 @@ export class ShadePass extends BasePass<IScene, IShadeOutput> {
 
     public process() {
         const shaded = new FrameBuffer();
-        const { camera, nodes, light } = this.input;
+        const { camera } = this.input;
         const { width, height } = shaded;
 
         shaded.walk((x, y) => {
@@ -35,7 +36,7 @@ export class ShadePass extends BasePass<IScene, IShadeOutput> {
 
         const color = material.shade(
             ray,
-            light.at(hitPoint),
+            this.getIllumination(hitPoint),
             hitPoint,
             normal.normalize()
         );
@@ -53,6 +54,23 @@ export class ShadePass extends BasePass<IScene, IShadeOutput> {
 
         const reflectColor = this.rayTrace(reflectTime + 1, new Ray(hitResult.hitPoint, reflectDir));
         return color.multiply(1 - reflcetivity).add(reflectColor.multiply(reflcetivity));
+    }
+
+    public getIllumination(position: Vec3) {
+        const { nodes } = this.input;
+        const light = this.input.light as PointLight;
+        const ray = new Ray(position, light.position.subtract(position));
+
+        const hitResult = BaseGeometry.hitMulti(ray, nodes);
+        if (Object.is(hitResult, IntersectResult.NONE)) {
+            return light.at(position);
+        }
+
+        if (hitResult.distance >= light.position.subtract(position).length) {
+            return light.at(position);
+        }
+
+        return new Illumination(new Vec3(0, 0, 0), position.subtract(light.position));
     }
 
 }

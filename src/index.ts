@@ -9,8 +9,8 @@ function main() {
     const scene = new BaseScene();
     preTest.setUniforms(scene);
     const testResult = preTest.render();
-    renderImage(testResult.depth);
-    renderImage(testResult.normal);
+    // renderImage(testResult.depth);
+    // renderImage(testResult.normal);
     renderImage(testResult.shaded);
 }
 
