@@ -5,4 +5,6 @@ export abstract class BaseLight {
 
     public abstract at(position: Vec3): Illumination;
 
+    public abstract sample(): Vec3;
+
 }

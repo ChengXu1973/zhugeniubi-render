@@ -1,12 +1,10 @@
 import { BaseGeometry } from "../../geometry/base-geometry";
-import { Illumination } from "../../light/illumination";
-import { PointLight } from "../../light/point-light";
 import { Ray } from "../../math/ray";
 import { Vec3 } from "../../math/vec3";
 import { IScene, IShadeOutput } from "../../types";
 import { FrameBuffer } from "../../utils/frame-buffer";
 import { IntersectResult } from "../../utils/intersect-result";
-import { MAX_REFLECT_TIME } from "../../utils/macros";
+import { DRT_RAYS_COUNT, MAX_DIFFUSE_RATE, MAX_REFLECT_TIME } from "../../utils/macros";
 import { BasePass } from "../base-pass";
 
 export class ShadePass extends BasePass<IScene, IShadeOutput> {
@@ -48,29 +46,59 @@ export class ShadePass extends BasePass<IScene, IShadeOutput> {
         if (!reflcetivity) {
             return color;
         }
+        const reflectColor = this.getReflectColor(hitResult, ray, reflectTime + 1);
+        return color.multiply(1 - reflcetivity).add(reflectColor.multiply(reflcetivity));
+    }
+
+    private getReflectColor(hitResult: IntersectResult, ray: Ray, reflectTime: number) {
+        const roughness = hitResult.target.meterial.roughness;
+
         const reflectDir = hitResult.normal.multiply(
             -2 * hitResult.normal.dot(ray.direction)
         ).add(ray.direction);
 
-        const reflectColor = this.rayTrace(reflectTime + 1, new Ray(hitResult.hitPoint, reflectDir));
-        return color.multiply(1 - reflcetivity).add(reflectColor.multiply(reflcetivity));
+        if (!roughness) {
+            const reflectColor = this.rayTrace(reflectTime, new Ray(hitResult.hitPoint, reflectDir));
+            return reflectColor;
+        }
+
+        const len = Math.random() * roughness * MAX_DIFFUSE_RATE;
+        let color = Vec3.zero;
+        for (let i = 0; i < DRT_RAYS_COUNT; i++) {
+            const dir = reflectDir.add(new Vec3(
+                Math.random() * len,
+                Math.random() * len,
+                Math.random() * len,
+            ));
+            color = color.add(this.rayTrace(reflectTime, new Ray(hitResult.hitPoint, dir)));
+        }
+        return color.divide(DRT_RAYS_COUNT);
+
     }
 
     public getIllumination(position: Vec3) {
         const { nodes } = this.input;
-        const light = this.input.light as PointLight;
-        const ray = new Ray(position, light.position.subtract(position));
+        const light = this.input.light;
 
-        const hitResult = BaseGeometry.hitMulti(ray, nodes);
-        if (Object.is(hitResult, IntersectResult.NONE)) {
-            return light.at(position);
+        let lightCount = 0;
+        for (let i = 0; i < DRT_RAYS_COUNT; i++) {
+            const pos = light.sample();
+            const ray = new Ray(position, pos.subtract(position));
+            const hitResult = BaseGeometry.hitMulti(ray, nodes);
+            if (Object.is(hitResult, IntersectResult.NONE)) {
+                lightCount++;
+                continue;
+            }
+            if (hitResult.distance >= pos.subtract(position).length) {
+                lightCount++;
+                continue;
+            }
         }
 
-        if (hitResult.distance >= light.position.subtract(position).length) {
-            return light.at(position);
-        }
+        const illuminate = light.at(position);
+        illuminate.color = illuminate.color.multiply(lightCount / DRT_RAYS_COUNT);
 
-        return new Illumination(new Vec3(0, 0, 0), position.subtract(light.position));
+        return illuminate;
     }
 
 }

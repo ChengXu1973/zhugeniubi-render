@@ -4,7 +4,7 @@ export class Ray {
 
     public constructor(origin: Vec3, direction: Vec3) {
         this.origin = origin.clone();
-        this.direction = direction.clone().normalize();
+        this.direction = direction.normalize();
     }
 
     public origin: Vec3;

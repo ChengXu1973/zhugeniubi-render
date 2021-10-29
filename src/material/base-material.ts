@@ -8,4 +8,6 @@ export abstract class BaseMeterial {
 
     public reflcetivity?: number;
 
+    public roughness?: number;
+
 }

@@ -33,7 +33,8 @@ export class BaseScene implements IScene {
             new Vec3(1, 1, 1),
             30,
             color1.multiply(0.2),
-            0.5
+            0.5,
+            0.2
         );
 
         ball2.meterial = new BlinnPhoneMaterial(
@@ -41,7 +42,8 @@ export class BaseScene implements IScene {
             new Vec3(1, 1, 1),
             50,
             color2.multiply(0.2),
-            0.8
+            0.8,
+            0.3
         );
 
         ball3.meterial = new BlinnPhoneMaterial(
@@ -49,7 +51,8 @@ export class BaseScene implements IScene {
             new Vec3(1, 1, 1),
             80,
             color3.multiply(0.2),
-            0.2
+            0.2,
+            0.5
         );
 
         this.nodes = [ball1, ball2, ball3];
@@ -58,6 +61,7 @@ export class BaseScene implements IScene {
             new Vec3(-100, 100, 100),
             new Vec3(1, 1, 1),
             distance => 1,
+            50,
         );
     }
 
